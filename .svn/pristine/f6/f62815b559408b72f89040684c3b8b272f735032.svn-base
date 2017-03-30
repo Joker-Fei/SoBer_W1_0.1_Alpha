@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="SoBer_W1_0.1_Alpha"
+  id="myeclipse.1455603021565"
+  context-root="/SoBer_W1_0.1_Alpha"
+  j2ee-spec="6.0"
+  archive="SoBer_W1_0.1_Alpha.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

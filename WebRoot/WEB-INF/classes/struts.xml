@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+<constant name="struts.custom.i18n.resources" value="globalMessages"/>
+	<constant name="struts.i18n.encoding" value="utf-8"/>
+	<!-- 服务器指定一个临时的路径  否则会上传失败 -->
+	<!-- <constant name="struts.multipart.saveDir" value="绝对路径"></constant>  此处的value为绝对路径，这一点很重要 -->
+	<constant name="struts.multipart.saveDir" value="/usr/local/apache-tomcat-7.0.68/webapps/SoBer_W1_0.1_Alpha/upload/"/>
+	<constant name="struts.multipart.maxSize" value="30000000"></constant>
+	<!-- <package name="lee" extends="struts-default" namespace=""> -->
+	<package name="lee" extends="struts-default" namespace="">
+		<action name="file" class="com.tools.FileUpload" method="upload">
+			<interceptor-ref name="fileUpload">
+				<!--<param name="allowedTypes">application/zip,application/octet-stream</param>-->
+				<param name="maximumSize">524288000</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"/>
+			<!-- 保存路径为当前项目WebRoot/upload -->
+			<param name="savePath">/upload</param>
+			<result name="success">index.jsp</result>
+			<result name="input">index.jsp</result>
+		</action>
+ 	
+ 		<action name="fileUpload" class="com.action.DriverServlet" method="imgUpload">
+ 			<param name="savePath">/upload</param>
+			<result name="imgUrl">jsonData.jsp</result>
+		</action> 
+ 		<action name="IOSfileUpload" class="com.action.IOSDriverServlet" method="imgUpload">
+ 			<param name="savePath">/upload</param>
+			<result name="IOSimgUrl">jsonData.jsp</result>
+		</action> 
+		
+		<action name="login" class="com.action.DriverServlet" method="login">
+			<result name="success">jsonData.jsp</result>
+			<result name="failed">jsonData.jsp</result>
+		</action>
+		<action name="IOSlogin" class="com.action.IOSDriverServlet" method="login">
+			<result name="IOSsuccess">jsonData.jsp</result>
+			<result name="IOSfailed">jsonData.jsp</result>
+		</action>
+		<!-- 公司简介 -->
+		<action name="companyInfo" class="com.action.CompanyServlet" method="companyInfo">
+			<result name="companyContent">jsonData.jsp</result>
+		</action>
+		<action name="IOScompanyInfo" class="com.action.IOSCompanyServlet" method="companyInfo">
+			<result name="IOScompanyContent">jsonData.jsp</result>
+		</action>
+		<!-- 公司新闻 -->
+		<action name="news" class="com.action.NewsServlet" method="news">
+			  <result name="news">jsonData.jsp</result> 
+		</action>
+		<action name="IOSnews" class="com.action.IOSNewsServlet" method="news">
+			  <result name="IOSnews">jsonData.jsp</result> 
+		</action>
+		<!-- 公司优惠政策 -->
+		<action name="discount" class="com.action.DiscountServlet" method="discount">
+			  <result name="discount">jsonData.jsp</result> 
+		</action>
+	
+		<action name="IOSdiscount" class="com.action.IOSDiscountServlet" method="discount">
+			  <result name="IOSdiscount">jsonData.jsp</result> 
+		</action>
+		<action name="register" class="com.action.DriverServlet" method="register">
+			<result name="success">jsonData.jsp</result>
+			<result name="failed">jsonData.jsp</result>
+		</action>
+		
+	<!--  主页公司简介、新闻、优惠信息展示 -->
+		<action name="main_news" class="com.action.main_news" method="mainNews">
+			  <result name="mainNews">jsonData.jsp</result> 
+		</action>
+		<action name="IOSmain_news" class="com.action.IOSmain_news" method="mainNews">
+			  <result name="IOSmainNews">jsonData.jsp</result> 
+		</action>
+		<!-- 手机号、身份证号验证 -->
+		<action name="infoCheck" class="com.action.DriverServlet" method="infoCheck">
+			  <result name="infocheck">jsonData.jsp</result> 
+		</action>
+		<action name="IOSinfoCheck" class="com.action.IOSDriverServlet" method="infoCheck">
+			  <result name="IOSinfocheck">jsonData.jsp</result> 
+		</action>
+		<!-- 修改密码 -->
+		<action name="setPwd" class="com.action.DriverServlet" method="newPwd">
+			  <result name="newPwd">jsonData.jsp</result> 
+		</action>
+		<action name="IOSsetPwd" class="com.action.IOSDriverServlet" method="newPwd">
+			  <result name="IOSnewPwd">jsonData.jsp</result> 
+		</action>
+		<!-- 查找个人信息 -->
+		<action name="driverInfo" class="com.action.DriverServlet" method="driverInfo">
+			  <result name="driverInfo">jsonData.jsp</result> 
+		</action>
+		<action name="IOSdriverInfo" class="com.action.IOSDriverServlet" method="driverInfo">
+			  <result name="IOSdriverInfo">jsonData.jsp</result> 
+		</action>
+		
+		
+		<!-- 车辆信息查询 -->
+		<action name="carInfo" class="com.action.DriverServlet" method="carInfo">
+			  <result name="carInfo">jsonData.jsp</result> 
+		</action>
+		<action name="IOScarInfo" class="com.action.IOSDriverServlet" method="carInfo">
+			  <result name="IOScarInfo">jsonData.jsp</result> 
+		</action>
+		<!-- 个人数据更新 -->
+		<action name="info" class="com.action.DriverServlet" method="info">
+			  <result name="info">jsonData.jsp</result> 
+		</action>
+		<action name="IOSinfo" class="com.action.IOSDriverServlet" method="info">
+			  <result name="IOSinfo">jsonData.jsp</result> 
+		</action>
+		<!-- 验证身份信息 -->
+		<action name="idCheck" class="com.action.DriverServlet" method="idCheck">
+			  <result name="idCheck">jsonData.jsp</result> 
+		</action>
+		<action name="IOSidCheck" class="com.action.IOSDriverServlet" method="idCheck">
+			  <result name="IOSidCheck">jsonData.jsp</result> 
+		</action>
+		<!-- 验证+修改密码 -->
+		<action name="modifyPwd" class="com.action.DriverServlet" method="modifyPwd">
+			  <result name="modifyPwd">jsonData.jsp</result> 
+		</action>
+		<action name="IOSmodifyPwd" class="com.action.IOSDriverServlet" method="modifyPwd">
+			  <result name="IOSmodifyPwd">jsonData.jsp</result> 
+		</action>
+		<action name="location" class="com.action.DriverServlet" method="location">
+		</action>
+		<!--  消息  -->
+		<action name="message" class="com.action.MessageServlet" method="message">
+			  <result name="message">jsonData.jsp</result> 
+		</action>
+		<action name="IOSmessage" class="com.action.IOSMessageServlet" method="message">
+			  <result name="IOSmessage">jsonData.jsp</result> 
+		</action>
+		<!--  消息  -->
+		<action name="workState" class="com.action.DriverServlet" method="workState">
+		</action>
+		<action name="onlineState" class="com.action.DriverServlet" method="onlineState">
+		</action>
+		 <action name="register2" class="com.tools.RegisterTest" method="register2">
+			  <result name="register2">register_success.jsp</result> 
+		</action> 
+	</package>
+</struts>    

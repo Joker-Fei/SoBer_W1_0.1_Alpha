@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name></display-name>
+  
+  
+    <servlet>
+    <servlet-name>InitConfigInfo</servlet-name>
+    <servlet-class>com.tools.InitConfigInfo</servlet-class>
+    <init-param>
+      <param-name>driver</param-name>
+      <param-value>com.mysql.jdbc.Driver</param-value>
+    </init-param>
+    <init-param>
+      <param-name>url</param-name>
+      <param-value>
+  jdbc:mysql://localhost:3306/app?characterEncoding=utf-8
+
+<!--               
+                jdbc:mysql://139.129.25.106:3306/app?characterEncoding=utf-8
+   -->
+            </param-value>
+    </init-param>
+  
+    <!--
+       <init-param>
+      <param-name>userName</param-name>
+      <param-value>root</param-value>
+    </init-param>
+    <init-param>
+      <param-name>userPwd</param-name>
+      <param-value>123123</param-value>
+    </init-param>   
+   -->
+      <init-param>
+      <param-name>userName</param-name>
+      <param-value>root</param-value>
+    </init-param>
+    <init-param>
+      <param-name>userPwd</param-name>
+      <param-value>root123</param-value>
+    </init-param> 
+    <load-on-startup>1</load-on-startup>
+  </servlet> 
+  
+    <filter>
+    <display-name>EncodingFilter</display-name>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>com.tools.EncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>DriverServlet</servlet-name>
+    <servlet-class>com.action.DriverServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>companyInfoServlet</servlet-name>
+    <servlet-class>com.action.companyInfoServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>adminLoginServlet</servlet-name>
+    <servlet-class>com.action.adminLoginServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>CompanyServlet</servlet-name>
+    <servlet-class>com.action.CompanyServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>NewsServlet</servlet-name>
+    <servlet-class>com.action.NewsServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>DiscountServlet</servlet-name>
+    <servlet-class>com.action.DiscountServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>main_news</servlet-name>
+    <servlet-class>com.action.main_news</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>MessageServlet</servlet-name>
+    <servlet-class>com.action.MessageServlet</servlet-class>
+  </servlet>
+
+
+
+
+
+  
+  <servlet-mapping>
+    <servlet-name>DriverServlet</servlet-name>
+    <url-pattern>/DriverServlet</url-pattern>
+  </servlet-mapping>
+  
+ 
+  <servlet-mapping>
+    <servlet-name>CompanyServlet</servlet-name>
+    <url-pattern>/servlet/CompanyServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>NewsServlet</servlet-name>
+    <url-pattern>/servlet/NewsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DiscountServlet</servlet-name>
+    <url-pattern>/servlet/DiscountServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>main_news</servlet-name>
+    <url-pattern>/servlet/main_news</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MessageServlet</servlet-name>
+    <url-pattern>/servlet/MessageServlet</url-pattern>
+  </servlet-mapping>
+  
+  
+   
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <filter>
+  	<filter-name>struts2</filter-name>
+  	<filter-class>
+  		org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+  	</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>struts2</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping></web-app>

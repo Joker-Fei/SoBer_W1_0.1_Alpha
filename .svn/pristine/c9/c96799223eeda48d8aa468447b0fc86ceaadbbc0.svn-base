@@ -1,0 +1,631 @@
+package com.action;
+
+import com.entity.Driver;
+import com.entity.Location;
+import com.opensymphony.xwork2.ActionSupport;
+import com.service.DriverService;
+import com.tools.FileUpload;
+import java.io.File;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.sql.Date;
+import java.util.Calendar;
+import java.util.UUID;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import net.sf.json.JSONObject;
+import org.apache.struts2.ServletActionContext;
+
+public class DriverServlet extends ActionSupport
+{
+  FileUpload fileUpload = new FileUpload();
+  String location;
+  String register;
+  String imgFileName;
+  String imgContentType;
+  File img;
+  String imgUpload;
+  String fileId;
+  String login;
+  String infoCheck;
+  String newPwd;
+  String driverInfo;
+  String carInfo;
+  String info;
+  String idCheck;
+
+  public void init()
+    throws ServletException
+  {
+  }
+
+  public String getLocation()
+  {
+    return this.location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+//http://localhost:8080/SoBer_W1_0.1_Alpha/location 
+//http://localhost:8080/SoBer_W1_0.1_Alpha/driverInfo?driverInfo={"phoneNum":"15504506083"} 
+  public void location()
+  {
+   // System.out.println("===已进入location方法===");
+
+    JSONObject jsonObject = JSONObject.fromObject(location);
+
+     String phoneNum =jsonObject.getString("phoneNum");
+    String longitude =jsonObject.getString("longitude");
+    String latitude = jsonObject.getString("latitude");
+
+    DriverService driverService = new DriverService();
+    Location location = new Location(phoneNum, longitude, latitude);
+
+    int a = driverService.findByLocationId(phoneNum);
+    System.out.println("a=" + a);
+    if (a == 0)
+    {
+      int b = driverService.insert(location);
+     System.out.println("b=" + b);
+    }
+    else {
+      int c = driverService.updateLocation(phoneNum, longitude, latitude);
+     System.out.println("实时更新经纬度c=" + c);
+    }
+  }
+
+  public String getRegister()
+  {
+    return this.register;
+  }
+
+  public void setRegister(String register) {
+    this.register = register;
+  }
+
+  public String register() throws Exception {
+   // System.out.println("这是注册-================");
+
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    JSONObject jsonObject = JSONObject.fromObject(this.register);
+    System.out.println(register);
+
+    String phoneNum = jsonObject.getString("phoneNum");
+
+    String name = jsonObject.getString("name");
+
+    String pwd = jsonObject.getString("pwd");
+    String idCard = jsonObject.getString("idCard");
+    String driverImg = jsonObject.getString("driverImg");
+    String runImg = jsonObject.getString("runImg");
+    String city = jsonObject.getString("city");
+    String carNum = jsonObject.getString("carNum");
+    String brand = jsonObject.getString("brand");
+    String length = jsonObject.getString("length");
+    String model = jsonObject.getString("model");
+
+    String walletId = "123123";
+
+    String address = "";
+    String img = "http";
+
+    UUID uuid = UUID.randomUUID();
+
+    Calendar c = Calendar.getInstance();
+    int y = c.get(1);
+    int m = c.get(2);
+    int d = c.get(5);
+    String date = y + "-" + m + "-" + d;
+    Date registerTime = Date.valueOf(date);
+
+    Driver driver = new Driver(phoneNum, name, pwd, idCard, driverImg, runImg, city, carNum, brand, 
+      length, model, Integer.parseInt(walletId), address, 
+      registerTime, String.valueOf(uuid), img);
+
+    DriverService driverService = new DriverService();
+    int result = driverService.register(driver);
+  //  System.out.println("result=" + result);
+
+    if (result == 0)
+    {
+      request.setAttribute("json", "faile");
+      return "failed";
+    }
+
+    JSONObject jsonResult = new JSONObject();
+    jsonResult.put("state", "success");
+
+    String jsonStr = jsonResult.toString();
+    request.setAttribute("json", jsonStr);
+
+    return "success";
+  }
+  
+  public String getImgFileName()
+  {
+    return this.imgFileName;
+  }
+
+  public void setImgFileName(String imgFileName) {
+    this.imgFileName = imgFileName;
+  }
+
+  public File getImg() {
+    return this.img;
+  }
+
+  public void setImg(File img) {
+    this.img = img;
+  }
+
+  public String getImgContentType() {
+    return this.imgContentType;
+  }
+
+  public void setImgContentType(String imgContentType) {
+    this.imgContentType = imgContentType;
+  }
+
+  public String getImgUpload()
+  {
+    return this.imgUpload;
+  }
+
+  public void setImgUpload(String imgUpload) {
+    this.imgUpload = imgUpload;
+  }
+
+  public String getFileId()
+  {
+    return this.fileId;
+  }
+
+  public void setFileId(String fileId) {
+    this.fileId = fileId;
+  }
+
+  public String imgUpload()
+    throws Exception
+  {
+    String imgUrl = this.fileUpload.upload(this.imgFileName, this.img, this.imgContentType);
+
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    JSONObject jsonResult = new JSONObject();
+
+    jsonResult.put("fileUrl", imgUrl);
+
+    jsonResult.put("fileId", this.fileId);
+
+    String jsonStr = jsonResult.toString();
+    request.setAttribute("json", jsonStr);
+    return "imgUrl";
+  }
+
+  public String getLogin()
+  {
+    return this.login;
+  }
+
+  public void setLogin(String login) {
+    this.login = login;
+  }
+
+  public String login()
+    throws Exception
+  {
+    //System.out.println("开始登陆");
+
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    String pwd = "";
+
+    JSONObject jsonObject = JSONObject.fromObject(this.login);
+    
+    String id = jsonObject.getString("id");
+    pwd = jsonObject.getString("pwd");
+
+    DriverService driverService = new DriverService();
+    Driver loginUser = driverService.login(id, pwd);
+    if (loginUser == null)
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "faile");
+
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+      return "failed";
+    }
+
+    HttpSession session = request.getSession();
+
+    JSONObject jsonResult = new JSONObject();
+    jsonResult.put("state", "success");
+
+    String jsonStr = jsonResult.toString();
+    session.setAttribute("json", jsonStr);
+
+    return "success";
+  }
+
+  public String getInfoCheck()
+  {
+    return this.infoCheck;
+  }
+
+  public void setInfoCheck(String infoCheck) {
+    this.infoCheck = infoCheck;
+  }
+
+  public String infoCheck() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    JSONObject jsonObject = JSONObject.fromObject(this.infoCheck);
+
+    String phoneNum = jsonObject.getString("phoneNum");
+    String idCard = jsonObject.getString("idCard");
+  /*  System.out.println("phoneNum" + phoneNum);
+    System.out.println("idCard" + idCard);*/
+
+    DriverService driverService = new DriverService();
+    int a = driverService.checkInfo(phoneNum, idCard);
+    if (a == 0)
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "failed");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    else
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "success");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    return "infocheck";
+  }
+
+  public String getNewPwd()
+  {
+    return this.newPwd;
+  }
+
+  public void setNewPwd(String newPwd) {
+    this.newPwd = newPwd;
+  }
+
+  public String newPwd() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    JSONObject jsonObject = JSONObject.fromObject(this.newPwd);
+    String id = jsonObject.getString("phoneNum");
+    String newPwd = jsonObject.getString("newPwd");
+
+    DriverService driverService = new DriverService();
+    int a = driverService.changePwd(id, newPwd);
+
+    if (a == 0)
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "failed");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    else
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "success");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    return "newPwd";
+  }
+
+  public String getDriverInfo()
+  {
+    return this.driverInfo;
+  }
+
+  public void setDriverInfo(String driverInfo) {
+    this.driverInfo = driverInfo;
+  }
+  public String driverInfo() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+    JSONObject jsonObject = JSONObject.fromObject(driverInfo);
+    String phoneNum = jsonObject.getString("phoneNum");
+
+    DriverService driverService = new DriverService();
+    Driver driver = driverService.findByPhoneNum(phoneNum);
+
+    String name = driver.getName();
+    String pwd = driver.getPwd();
+    String idCard = driver.getIdCard();
+    String driverImg = driver.getDriverImg();
+    String runImg = driver.getRunImg();
+
+    String adress = driver.getAddress();
+    String walletId = Integer.toString(driver.getWalletId());
+
+    JSONObject jsonInfo = new JSONObject();
+    jsonInfo.put("name", name);
+    jsonInfo.put("pwd", pwd);
+    jsonInfo.put("idCard", idCard);
+    jsonInfo.put("driverImg", driverImg);
+    jsonInfo.put("runImg", runImg);
+
+    jsonInfo.put("address", adress);
+    jsonInfo.put("walletId", walletId);
+    //System.out.println(name);
+
+    String jsonStr = jsonInfo.toString();
+    request.setAttribute("json", jsonStr);
+
+    return "driverInfo";
+  }
+
+  public String getCarInfo()
+  {
+    return this.carInfo;
+  }
+
+  public void setCarInfo(String carInfo) {
+    this.carInfo = carInfo;
+  }
+  public String carInfo() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+    JSONObject jsonObject = JSONObject.fromObject(this.carInfo);
+    String phoneNum = jsonObject.getString("phoneNum");
+
+    DriverService driverService = new DriverService();
+    Driver driver = driverService.findByPhoneNum(phoneNum);
+
+    String carNum = driver.getCarNum();
+    String brand = driver.getBrand();
+    String length = driver.getLength();
+    String model = driver.getModel();
+    String city = driver.getCity();
+
+    JSONObject jsonInfo = new JSONObject();
+    
+    jsonInfo.put("city", city);
+    jsonInfo.put("carNum", carNum);
+    jsonInfo.put("brand", brand);
+    jsonInfo.put("length", length);
+    jsonInfo.put("model", model);
+
+    String jsonStr = jsonInfo.toString();
+    request.setAttribute("json", jsonStr);
+
+    return "carInfo";
+  }
+
+  public String getInfo()
+  {
+    return this.info;
+  }
+
+  public void setInfo(String info) {
+    this.info = info;
+  }
+  public String info() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+    //System.out.println("====进入信息修改方法====");
+
+ /*   //乱码问题转码
+    String info1 = null;
+	try {
+		info1 = new String(info.getBytes("iso-8859-1"),"utf-8");
+	} catch (UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}*/
+    try {
+		info=URLDecoder.decode(info, "utf-8");
+	} catch (UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    
+    JSONObject jsonObject = JSONObject.fromObject(info);
+
+    String phoneNum = jsonObject.getString("phoneNum");
+    String key = jsonObject.getString("key");
+    String message = jsonObject.getString("message");
+
+    DriverService driverService = new DriverService();
+
+    int result = driverService.update(phoneNum, key, message);
+    //System.out.println("result=" + result);
+
+    if (result == 0)
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "failed");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    else
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "success");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    return "info";
+  }
+
+  public String getIdCheck()
+  {
+    return this.idCheck;
+  }
+
+  public void setIdCheck(String idCheck) {
+    this.idCheck = idCheck;
+  }
+
+  String modifyPwd;
+  public String getModifyPwd() {
+	return modifyPwd;
+}
+
+public void setModifyPwd(String modifyPwd) {
+	this.modifyPwd = modifyPwd;
+}
+
+//http://localhost:8080/SoBer_W1_0.1_Alpha/modifyPwd 
+public String modifyPwd() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+
+    JSONObject jsonObject = JSONObject.fromObject(modifyPwd);
+
+    String phoneNum=jsonObject.getString("phoneNum");
+    String pwd=jsonObject.getString("pwd");
+    String newPwd=jsonObject.getString("newPwd");
+  /*  System.out.println("phoneNum="+phoneNum);
+    System.out.println("pwd="+pwd);
+    System.out.println("newPwd="+newPwd);*/
+    
+/*    String phoneNum="137654678652";
+    String pwd="123";
+    String newPwd="1234";*/
+    DriverService driverService = new DriverService();
+
+    int checkPAndP =driverService.checkPhoneNumAndPwd(phoneNum, pwd);
+    //System.out.println("checkPAndP=" + checkPAndP);
+    if (checkPAndP == 0)
+    {//密码不匹配
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "failed");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    else
+    {//密码匹配,执行修改操作
+      int a = driverService.changePwd(phoneNum, newPwd);
+     // System.out.println("密码修改成功！a="+a);
+      
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "success");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    return "modifyPwd";
+  }
+public String idCheck() {
+    HttpServletRequest request = ServletActionContext.getRequest();
+    //System.out.println("====进入信息修改方法====");
+
+    JSONObject jsonObject = JSONObject.fromObject(this.idCheck);
+
+    String phoneNum = jsonObject.getString("phoneNum");
+    
+    DriverService driverService = new DriverService();
+
+    int result = driverService.checkPhoneNum(phoneNum);
+   // System.out.println("result=" + result);
+
+    if (result == 1)//服务端未更新
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "failed");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    else
+    {
+      JSONObject jsonResult = new JSONObject();
+      jsonResult.put("state", "success");
+      String jsonStr = jsonResult.toString();
+      request.setAttribute("json", jsonStr);
+    }
+    return "idCheck";
+  }
+		//work更改状态
+		String work;
+		public String getWork() {
+			return work;
+		}
+
+		public void setWork(String work) {
+			this.work = work;
+		}
+//		http://localhost:8080/SoBer_W1_0.1_Alpha/workState
+		public String workState(){
+			HttpServletRequest request = ServletActionContext.getRequest();
+			System.out.println("=============进入work方法==============");
+		    JSONObject jsonObject = JSONObject.fromObject(work);
+ 		    String workstr = jsonObject.getString("work");
+		    String phoneNum = jsonObject.getString("phoneNum");
+			
+			DriverService driverService=new DriverService();
+			int workint=Integer.parseInt(workstr);
+			
+			//int result=driverService.updateWork(phoneNum, workint);
+			
+			/*==================*/
+			
+			DriverService driverService1 = new DriverService();
+		    Location location = new Location(phoneNum,workint);
+
+		    int a = driverService1.findByLocationWorkId(phoneNum);
+		 //  System.out.println("work中的a=" + a);
+		    if (a == 0)
+		    {
+		    	
+		      int b = driverService1.insertwork(location);
+		   //  System.out.println("workb=" + b);
+		    }
+		    else {
+		      int c = driverService1.updateWork1(phoneNum,workint);
+		    // System.out.println("实时更新workc=" + c);
+		    }
+			/*==================*/
+			return "workState";
+		}
+		String online;
+
+		public String getOnline() {
+			return online;
+		}
+
+		public void setOnline(String online) {
+			this.online = online;
+		}
+		public String onlineState(){
+			HttpServletRequest request = ServletActionContext.getRequest();
+ 			System.out.println("=====进入online方法=====");
+		    JSONObject jsonObject = JSONObject.fromObject(online);
+ 		    String onlinestr = jsonObject.getString("online");
+		    String phoneNum = jsonObject.getString("phoneNum");
+			
+			DriverService driverService=new DriverService();
+			int onlineint=Integer.parseInt(onlinestr);
+			
+			//int result=driverService.updateWork(phoneNum, workint);
+			
+			/*==================*/
+			
+			DriverService driverService1 = new DriverService();
+		    Location location = new Location(phoneNum,onlineint);
+
+		    int a = driverService1.findByLocationOnlineId(phoneNum);
+		    System.out.println("online中的a=" + a);
+		    if (a == 0)
+		    {
+		    	
+		      int b = driverService1.insertonline(location);
+		    // System.out.println("workb=" + b);
+		    }
+		    else {
+		      int c = driverService1.updateOnline1(phoneNum,onlineint);
+		     System.out.println("===============c==============" + c);
+		    }
+			/*==================*/
+			return "onlineState";
+		}
+}

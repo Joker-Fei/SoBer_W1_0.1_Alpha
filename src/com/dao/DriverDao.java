@@ -159,7 +159,7 @@ public class DriverDao
 
   public int checkInfo(String phoneNum, String idCard)
   {
-    String sql = "select * from driver where phonenum=? and idcard=?";
+    String sql = "select * from driver where phonenum=? and idcard=? limit 1";//limit 1 唯一一条数据查询
     Object[] params = { phoneNum, idCard };
     if (findSingleBySQL(sql, params) != null) {
       return 1;
